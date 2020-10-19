@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { FiClock, FiInfo, FiArrowLeft } from "react-icons/fi";
+import { FiClock, FiInfo } from "react-icons/fi";
 import { Map, Marker, TileLayer } from "react-leaflet";
-import L from 'leaflet';
 import { useParams } from 'react-router-dom';
 
-import mapMarkerImg from '../../images/Local.svg';
 
 import './orphanage.css';
 import Sidebar from "../../components/Sidebar";
 import mapIcon from "../../utils/mapIcon";
 import api from "../../services/api";
-import { ExecFileOptionsWithStringEncoding } from "child_process";
 
 // const happyMapIcon = L.icon({
 //   iconUrl: mapMarkerImg,
@@ -47,6 +44,7 @@ interface OrphanageParams {
 export default function Orphanage() {
   const params = useParams<OrphanageParams>();
   const [orphanage, setOrphanage] = useState<orphanage>();
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const { id } = params;
 
@@ -66,12 +64,19 @@ export default function Orphanage() {
 
       <main>
         <div className="orphanage-details">
-          <img src={orphanage.images[0].url} alt={orphanage.name} />
+          <img src={orphanage.images[activeImageIndex].url} alt={orphanage.name} />
 
           <div className="images">
-            {orphanage.images.map(image => {
+            {orphanage.images.map((image, index) => {
               return (
-                <button key={orphanage.id} className="active" type="button">
+                <button
+                  key={orphanage.id}
+                  className="active"
+                  type="button"
+                  onClick={() => {
+                    setActiveImageIndex(index)
+                  }}
+                >
                   <img src={image.url} alt={orphanage.name} />
                 </button>
               )
@@ -100,7 +105,7 @@ export default function Orphanage() {
               </Map>
 
               <footer>
-                <a href="">Ver rotas no Google Maps</a>
+                <a target="_blank" rel="noopener noreferrer" href={`https://www.google.com/maps/dir/?api=1&destination=${orphanage.latitude}, ${orphanage.longitude}}`}>Ver rotas no Google Maps</a>
               </footer>
             </div>
 
